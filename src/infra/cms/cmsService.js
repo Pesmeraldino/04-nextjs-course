@@ -1,4 +1,4 @@
-const TOKEN = "3d6de33f2758497ba3a779c16df9e8";
+const TOKEN = process.env.DATOCMS_API_TOKEN;
 
 export async function cmsService({ query }) {
   try {
