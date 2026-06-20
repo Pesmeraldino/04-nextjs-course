@@ -3,6 +3,8 @@ import { Footer } from "../../components/commons/Footer";
 import { Menu } from "../../components/commons/Menu";
 import { Box, Text, theme } from "../../theme/components";
 import { cmsService } from "../../infra/cms/cmsService";
+import { StructuredText, renderNodeRule } from "react-datocms/structured-text";
+import { isHeading } from "datocms-structured-text-utils";
 
 export async function getStaticPaths() {
   return {
@@ -11,9 +13,8 @@ export async function getStaticPaths() {
   };
 }
 
-export async function getStaticProps({ params }) {
+export async function getStaticProps({ params, preview }) {
   const { id } = params;
-  //https://graphql.datocms.com/
 
   const contentQuery = `
   query {
@@ -28,12 +29,14 @@ export async function getStaticProps({ params }) {
 
   const { data } = await cmsService({
     query: contentQuery,
+    preview,
   });
 
-  console.log("Dados do cms", data);
+  console.log(data);
 
   return {
     props: {
+      cmsContent: data,
       id,
       title: data.contentFaqQuestion.title,
       content: data.contentFaqQuestion.content,
@@ -41,7 +44,8 @@ export async function getStaticProps({ params }) {
   };
 }
 
-export default function FAQQuestionScreen({ title, content }) {
+export default function FAQQuestionScreen({ cmsContent }) {
+  console.log(cmsContent.globalContent.globalFooter.description);
   return (
     <>
       <Head>
@@ -61,8 +65,6 @@ export default function FAQQuestionScreen({ title, content }) {
       >
         <Box
           styleSheet={{
-            display: "flex",
-            gap: theme.space.x4,
             flexDirection: "column",
             width: "100%",
             maxWidth: theme.space.xcontainer_lg,
@@ -70,15 +72,30 @@ export default function FAQQuestionScreen({ title, content }) {
           }}
         >
           <Text tag="h1" variant="heading1">
-            {title}
+            {cmsContent.contentFaqQuestion.title}
           </Text>
 
+          <StructuredText
+            data={cmsContent.contentFaqQuestion.content}
+            customNodeRules={[
+              renderNodeRule(isHeading, ({ node, children, key }) => {
+                const tag = `h${node.level}`;
+                const variant = `heading${node.level}`;
+                console.log("node", node);
+                return (
+                  <Text tag={tag} variant={variant} key={key}>
+                    {children}
+                  </Text>
+                );
+              }),
+            ]}
+          />
+          {/* <pre>{JSON.stringify(content, null, 4)}</pre> */}
           {/* <Box dangerouslySetInnerHTML={{ __html: content }} /> */}
-          <pre>{JSON.stringify(content, null, 4)}</pre>
         </Box>
       </Box>
 
-      <Footer />
+      <Footer descritpion={cmsContent.globalContent.globalFooter.description} />
     </>
   );
 }
