@@ -3,8 +3,10 @@ import { Footer } from "../../components/commons/Footer";
 import { Menu } from "../../components/commons/Menu";
 import { Box, Text, theme } from "../../theme/components";
 import { cmsService } from "../../infra/cms/cmsService";
+import CMSProvider from "../../infra/cms/CMSProvider";
 import { StructuredText, renderNodeRule } from "react-datocms/structured-text";
 import { isHeading } from "datocms-structured-text-utils";
+import { pageHOC } from "../../components/wrappers/pageHOC";
 
 export async function getStaticPaths() {
   return {
@@ -44,8 +46,7 @@ export async function getStaticProps({ params, preview }) {
   };
 }
 
-export default function FAQQuestionScreen({ cmsContent }) {
-  console.log(cmsContent.globalContent.globalFooter.description);
+function FAQQuestionScreen({ cmsContent }) {
   return (
     <>
       <Head>
@@ -81,7 +82,6 @@ export default function FAQQuestionScreen({ cmsContent }) {
               renderNodeRule(isHeading, ({ node, children, key }) => {
                 const tag = `h${node.level}`;
                 const variant = `heading${node.level}`;
-                console.log("node", node);
                 return (
                   <Text tag={tag} variant={variant} key={key}>
                     {children}
@@ -95,7 +95,9 @@ export default function FAQQuestionScreen({ cmsContent }) {
         </Box>
       </Box>
 
-      <Footer descritpion={cmsContent.globalContent.globalFooter.description} />
+      <Footer />
     </>
   );
 }
+
+export default pageHOC(FAQQuestionScreen);

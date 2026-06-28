@@ -1,37 +1,51 @@
-import Head from 'next/head';
-import { Footer } from '../../components/commons/Footer';
-import { Menu } from '../../components/commons/Menu';
-import { Box, Text, Link, Image, theme } from '../../theme/components';
+import Head from "next/head";
+import { Footer } from "../../components/commons/Footer";
+import { Menu } from "../../components/commons/Menu";
+import { Box, Text, Link, Image, theme } from "../../theme/components";
+import { cmsService } from "../../infra/cms/cmsService";
+import { pageHOC } from "../../components/wrappers/pageHOC";
 
-export function getStaticProps() {
+export async function getStaticProps({ preview }) {
+  const { data: cmsContent } = await cmsService({
+    query: `
+      query {
+        __typename
+      }   
+      `,
+    preview,
+  });
+
   return {
     props: {
+      cmsContent,
       categories: [
         {
-          id: 'b4bb5090',
-          name: 'Por onde começar',
+          id: "b4bb5090",
+          name: "Por onde começar",
           questions: [
             {
-              id: 'f138c88d',
-              name: 'Consigo entrar no mercado de trabalho com os cursos da Alura?',
-              content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.',
-            }
-          ]
+              id: "f138c88d",
+              name: "Consigo entrar no mercado de trabalho com os cursos da Alura?",
+              content:
+                "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.",
+            },
+          ],
         },
         {
-          id: 'c4bb5090',
-          name: 'Formações e Projetos',
+          id: "c4bb5090",
+          name: "Formações e Projetos",
           questions: [
             {
-              id: 'h138c88d',
-              name: 'Qual é a diferença do certificado de participação para o certificado de conclusão de formação?',
-              content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.',
-            }
-          ]
-        }
-      ]
-    }
-  }
+              id: "h138c88d",
+              name: "Qual é a diferença do certificado de participação para o certificado de conclusão de formação?",
+              content:
+                "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.",
+            },
+          ],
+        },
+      ],
+    },
+  };
 }
 
 function FAQAllQuestionsScreen({ categories }) {
@@ -54,15 +68,15 @@ function FAQAllQuestionsScreen({ categories }) {
       >
         <Box
           styleSheet={{
-            display: 'flex',
+            display: "flex",
             gap: theme.space.x4,
             flexDirection: {
-              xs: 'column',
-              md: 'row',
+              xs: "column",
+              md: "row",
             },
-            width: '100%',
+            width: "100%",
             maxWidth: theme.space.xcontainer_lg,
-            marginHorizontal: 'auto',
+            marginHorizontal: "auto",
           }}
         >
           {/* Block: Title Questions */}
@@ -87,13 +101,13 @@ function FAQAllQuestionsScreen({ categories }) {
             <Image
               src="https://www.alura.com.br/assets/img/home/homeNova/ilustra-alura-escafandro.1647533643.svg"
               styleSheet={{
-                maxWidth: '200px',
+                maxWidth: "200px",
                 marginVertical: theme.space.x10,
-                marginHorizontal: 'auto',
+                marginHorizontal: "auto",
                 display: {
-                  xs: 'none',
-                  md: 'block'
-                }
+                  xs: "none",
+                  md: "block",
+                },
               }}
             />
           </Box>
@@ -120,7 +134,7 @@ function FAQAllQuestionsScreen({ categories }) {
                     ))}
                   </Box>
                 </Box>
-              )
+              );
             })}
           </Box>
         </Box>
@@ -128,7 +142,7 @@ function FAQAllQuestionsScreen({ categories }) {
 
       <Footer />
     </>
-  )
+  );
 }
 
-export default FAQAllQuestionsScreen;
+export default pageHOC(FAQAllQuestionsScreen);

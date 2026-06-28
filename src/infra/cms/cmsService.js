@@ -32,7 +32,6 @@ export async function cmsService({ query, preview }) {
       headers: {
         "Content-Type": "application/json",
         Authorization: "Bearer " + TOKEN,
-        "X-Include-Drafts": "true",
       },
       body: JSON.stringify({ query: globalQuery }),
     }).then(async (respostaDoServer) => {
